@@ -66,9 +66,9 @@ invokes:
     name: samplecc
     targetPeers: OrgAnchor
     nProcPerOrg: 2
-    nRequest: 10
+    nRequest: 100
     runDur: 0
-    organizations: org1,org2
+    organizations: org1
     txnOpt:
       - mode: constant
         options:
