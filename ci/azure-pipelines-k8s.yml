@@ -114,7 +114,7 @@ stages:
         peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
         peer lifecycle chaincode queryinstalled --peerAddresses $CLUSTER_IP:31000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls > output.txt
         PACKAGE_ID=$(cat output.txt | sed -n '1!p' | sed -e 's/^Package ID: //' -e 's/,.*//')
-        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version 1 --init-required --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version 1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Installing Chaincode on org1
     - script: |
         set -x
@@ -128,7 +128,7 @@ stages:
         peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
         peer lifecycle chaincode queryinstalled --peerAddresses $CLUSTER_IP:31001 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls > output.txt
         PACKAGE_ID=$(cat output.txt | sed -n '1!p' | sed -e 's/^Package ID: //' -e 's/,.*//')
-        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version 1 --init-required --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version 1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Installing Chaincode on org2
     - script: |
         set -x
@@ -138,7 +138,7 @@ stages:
         export CORE_PEER_MSPCONFIGPATH="$PWD/tools/operator/crypto-config/peerOrganizations/org1/users/Admin@org1/msp"
         export CORE_PEER_TLS_ROOTCERT_FILE="$PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt"
         export CLUSTER_IP=169.62.57.123
-        peer lifecycle chaincode commit --channelID testorgschannel0 --name samplecc --version 1 --sequence 1 --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode commit --channelID testorgschannel0 --name samplecc --version 1 --init-required --sequence 1 --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Instantiating Chaincode
     # - script: |
     #     cd tools/operator
