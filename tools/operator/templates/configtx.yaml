@@ -69,8 +69,8 @@
 #@     blockValidation = {"Type": "ImplicitMeta", "Rule": "ANY Writers"}
 #@     output = {"Readers":readers, "Writers": writers, "Admins": admins, "BlockValidation": blockValidation}
 #@   else:
-#@     lifeCycleEndorsement = {"Type": "ImplicitMeta", "Rule": "MAJORITY Endorsement"}
-#@     endorsement = {"Type": "ImplicitMeta", "Rule": "MAJORITY Endorsement"}
+#@     lifeCycleEndorsement = {"Type": "ImplicitMeta", "Rule": "ANY Endorsement"}
+#@     endorsement = {"Type": "ImplicitMeta", "Rule": "ANY Endorsement"}
 #@     output = {"Readers":readers, "Writers": writers, "Admins": admins, "LifecycleEndorsement": lifeCycleEndorsement, "Endorsement": endorsement}
 #@   end
 #@   return output

@@ -11,9 +11,9 @@ fabricVersion: 2.0.0-stable
 #! peer database ledger type (couchdb, goleveldb)
 dbType: goleveldb
 #! This parameter is used to define fabric logging spec in peers
-peerFabricLoggingSpec: error
+peerFabricLoggingSpec: debug
 #! This parameter is used to define fabric logging spec in orderers
-ordererFabricLoggingSpec: error
+ordererFabricLoggingSpec: debug
 #! tls in the network (true, false or mutual(mutualtls))
 tls: true
 #! fabric metrics with prometheus (true/false)
