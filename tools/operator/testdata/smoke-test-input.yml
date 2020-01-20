@@ -31,14 +31,14 @@ joinChannel:
 installChaincode:
 # installs chaincode with specified name on all peers in listed organziations
   - name: samplecc
-    version: v1
+    version: v3
     path: github.com/hyperledger/fabric-test/chaincodes/samplecc/go
     organizations: org1,org2
     language: golang
     metadataPath: ""
 
   - name: samplecc
-    version: v2
+    version: v4
     path: github.com/hyperledger/fabric-test/chaincodes/samplecc/go
     organizations: org1,org2
     language: golang
@@ -47,7 +47,7 @@ installChaincode:
 instantiateChaincode:
   - channelName: testorgschannel0
     name: samplecc
-    version: v1
+    version: v3
     args: ""
     organizations: org1
     endorsementPolicy: 2of(org1,org2)
