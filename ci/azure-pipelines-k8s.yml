@@ -35,11 +35,11 @@ stages:
     - task: DownloadSecureFile@1
       name: kubeconfig # The name with which to reference the secure file's path on the agent, like $(mySecureFile.secureFilePath)
       inputs:
-        secureFile: kube-config-wdc04-community-migration.yml
+        secureFile: kube-config-wdc07-community-longrun.yml
     - task: DownloadSecureFile@1
       name: cacert
       inputs:
-        secureFile: ca-wdc04-community-migration.pem
+        secureFile: ca-wdc07-community-longrun.pem
     - script: |
           wget https://hyperledger.jfrog.io/hyperledger/fabric-binaries/hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
           tar -xzvf hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz -C $(Agent.BuildDirectory)/go/
@@ -47,7 +47,7 @@ stages:
     - script: |
           cd tools/operator
           echo $KUBE_PATH
-          go run main.go -i testdata/performance-network-spec.yml -k $KUBE_PATH -a up
+          go run main.go -i testdata/smoke-network-spec.yml -k $KUBE_PATH -a up
       displayName: Network launch
     - publish: 'tools/operator/configFiles'
       artifact: configFiles
@@ -92,11 +92,11 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a create
+        go run main.go -i testdata/smoke-test-input.yml -a create
       displayName: Create Channel
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a join
+        go run main.go -i testdata/smoke-test-input.yml -a join
       displayName: Join Channel
     - script: |
         wget https://hyperledger.jfrog.io/hyperledger/fabric-binaries/hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
@@ -139,11 +139,11 @@ stages:
       displayName: Instantiating Chaincode
     # - script: |
     #     cd tools/operator
-    #     go run main.go -i testdata/performance-test-input.yml -a install
+    #     go run main.go -i testdata/smoke-test-input.yml -a install
     #   displayName: Install Chaincode
     # - script: |
     #     cd tools/operator
-    #     go run main.go -i testdata/performance-test-input.yml -a instantiate
+    #     go run main.go -i testdata/smoke-test-input.yml -a instantiate
     #   displayName: Instantiate Chaincode
     - publish: 'tools/operator/connection-profile'
       artifact: 'connection-profiles-updated'
@@ -173,7 +173,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a query
+        go run main.go -i testdata/smoke-test-input.yml -a query
       displayName: Queries
 
 - stage: Operator_k8s_invokes1
@@ -202,7 +202,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a invoke
+        go run main.go -i testdata/smoke-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes2
@@ -231,7 +231,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a invoke
+        go run main.go -i testdata/smoke-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes3
@@ -260,7 +260,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a invoke
+        go run main.go -i testdata/smoke-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes4
@@ -289,7 +289,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a invoke
+        go run main.go -i testdata/performa-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes5
@@ -318,7 +318,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-test-input.yml -a invoke
+        go run main.go -i testdata/smoke-test-input.yml -a invoke
       displayName: Invokes
 
 # - stage: Operator_k8s_invokes6
@@ -348,7 +348,7 @@ stages:
 #       displayName: NPM install
 #     - script: |
 #         cd tools/operator
-#         go run main.go -i testdata/performance-test-input.yml -a invoke
+#         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
 # - stage: Operator_k8s_invokes7
@@ -378,7 +378,7 @@ stages:
 #       displayName: NPM install
 #     - script: |
 #         cd tools/operator
-#         go run main.go -i testdata/performance-test-input.yml -a invoke
+#         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
 # - stage: Operator_k8s_invokes8
@@ -408,7 +408,7 @@ stages:
 #       displayName: NPM install
 #     - script: |
 #         cd tools/operator
-#         go run main.go -i testdata/performance-test-input.yml -a invoke
+#         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
 # - stage: Operator_k8s_invokes9
@@ -438,7 +438,7 @@ stages:
 #       displayName: NPM install
 #     - script: |
 #         cd tools/operator
-#         go run main.go -i testdata/performance-test-input.yml -a invoke
+#         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
 # - stage: Operator_k8s_invokes10
@@ -468,7 +468,7 @@ stages:
 #       displayName: NPM install
 #     - script: |
 #         cd tools/operator
-#         go run main.go -i testdata/performance-test-input.yml -a invoke
+#         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
 - stage: Operator_k8s_network_delete
@@ -503,11 +503,11 @@ stages:
     - task: DownloadSecureFile@1
       name: kubeconfig # The name with which to reference the secure file's path on the agent, like $(mySecureFile.secureFilePath)
       inputs:
-        secureFile: kube-config-wdc04-community-migration.yml
+        secureFile: kube-config-wdc07-community-longrun.yml
     - task: DownloadSecureFile@1
       name: cacert
       inputs:
-        secureFile: ca-wdc04-community-migration.pem
+        secureFile: ca-wdc07-community-longrun.pem
     - task: DownloadPipelineArtifact@2
       inputs:
         source: current
@@ -515,5 +515,5 @@ stages:
         path: tools/operator/configFiles
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performance-network-spec.yml -k $KUBE_PATH -a down
+        go run main.go -i testdata/smoke-network-spec.yml -k $KUBE_PATH -a down
       displayName: Network delete
