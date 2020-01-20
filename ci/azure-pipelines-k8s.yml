@@ -112,9 +112,10 @@ stages:
         export CLUSTER_IP=169.62.57.123
         peer lifecycle chaincode package samplecc.tar.gz --path github.com/hyperledger/fabric-test/chaincodes/samplecc/go --label sampleccv1
         peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer1-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
         peer lifecycle chaincode queryinstalled --peerAddresses $CLUSTER_IP:31000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls > output.txt
         PACKAGE_ID=$(cat output.txt | sed -n '1!p' | sed -e 's/^Package ID: //' -e 's/,.*//')
-        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version v1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version v1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31000 --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer1-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Installing Chaincode on org1
     - script: |
         set -x
@@ -125,10 +126,11 @@ stages:
         export CORE_PEER_TLS_ROOTCERT_FILE="$PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt"
         export CLUSTER_IP=169.62.57.123
         peer lifecycle chaincode package samplecc.tar.gz --path github.com/hyperledger/fabric-test/chaincodes/samplecc/go --label samplecc_1
-        peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
-        peer lifecycle chaincode queryinstalled --peerAddresses $CLUSTER_IP:31001 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls > output.txt
+        peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31002 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode install samplecc.tar.gz --peerAddresses $CLUSTER_IP:31003 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode queryinstalled --peerAddresses $CLUSTER_IP:31002 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls > output.txt
         PACKAGE_ID=$(cat output.txt | sed -n '1!p' | sed -e 's/^Package ID: //' -e 's/,.*//')
-        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version v1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31001 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
+        peer lifecycle chaincode approveformyorg --channelID testorgschannel0 --name samplecc --version v1 --package-id ${PACKAGE_ID} --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31002 --peerAddresses $CLUSTER_IP:31003 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer0-org2.org2/tls/ca.crt --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org2/peers/peer1-org2.org2/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Installing Chaincode on org2
     - script: |
         set -x
@@ -294,7 +296,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/performa-test-input.yml -a invoke
+        go run main.go -i testdata/smoke-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes5
@@ -476,49 +478,49 @@ stages:
 #         go run main.go -i testdata/smoke-test-input.yml -a invoke
 #       displayName: Invokes
 
-- stage: Operator_k8s_network_delete
-  displayName: NetworkDelete  # friendly name to display in the UI
-  dependsOn:
-  - Operator_k8s_network
-  - Operator_k8s_admin_actions
-  - Operator_k8s_invokes1
-  - Operator_k8s_invokes2
-  - Operator_k8s_invokes3
-  - Operator_k8s_invokes4
-  - Operator_k8s_invokes5
-  # - Operator_k8s_invokes6
-  # - Operator_k8s_invokes7
-  # - Operator_k8s_invokes8
-  # - Operator_k8s_invokes9
-  # - Operator_k8s_invokes10
-  - Operator_k8s_queries
-  condition: or(succeeded(), failed())
-  pool: vms
-  jobs:
-  - job: NetworkDelete
-    steps:
-    - template: templates/install_deps.yml
-    - checkout: self
-      path: 'go/src/github.com/hyperledger/fabric-test'
-      displayName: Checkout Fabric Test Code
-    - task: KubectlInstaller@0
-      displayName: Kubectl installer
-      inputs: 
-        kubectlVersion: 1.13.1
-    - task: DownloadSecureFile@1
-      name: kubeconfig # The name with which to reference the secure file's path on the agent, like $(mySecureFile.secureFilePath)
-      inputs:
-        secureFile: kube-config-wdc07-community-longrun.yml
-    - task: DownloadSecureFile@1
-      name: cacert
-      inputs:
-        secureFile: ca-wdc07-community-longrun.pem
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        source: current
-        artifact: configFiles
-        path: tools/operator/configFiles
-    - script: |
-        cd tools/operator
-        go run main.go -i testdata/smoke-network-spec.yml -k $KUBE_PATH -a down
-      displayName: Network delete
+# - stage: Operator_k8s_network_delete
+#   displayName: NetworkDelete  # friendly name to display in the UI
+#   dependsOn:
+#   - Operator_k8s_network
+#   - Operator_k8s_admin_actions
+#   - Operator_k8s_invokes1
+#   - Operator_k8s_invokes2
+#   - Operator_k8s_invokes3
+#   - Operator_k8s_invokes4
+#   - Operator_k8s_invokes5
+#   # - Operator_k8s_invokes6
+#   # - Operator_k8s_invokes7
+#   # - Operator_k8s_invokes8
+#   # - Operator_k8s_invokes9
+#   # - Operator_k8s_invokes10
+#   - Operator_k8s_queries
+#   condition: or(succeeded(), failed())
+#   pool: vms
+#   jobs:
+#   - job: NetworkDelete
+#     steps:
+#     - template: templates/install_deps.yml
+#     - checkout: self
+#       path: 'go/src/github.com/hyperledger/fabric-test'
+#       displayName: Checkout Fabric Test Code
+#     - task: KubectlInstaller@0
+#       displayName: Kubectl installer
+#       inputs: 
+#         kubectlVersion: 1.13.1
+#     - task: DownloadSecureFile@1
+#       name: kubeconfig # The name with which to reference the secure file's path on the agent, like $(mySecureFile.secureFilePath)
+#       inputs:
+#         secureFile: kube-config-wdc07-community-longrun.yml
+#     - task: DownloadSecureFile@1
+#       name: cacert
+#       inputs:
+#         secureFile: ca-wdc07-community-longrun.pem
+#     - task: DownloadPipelineArtifact@2
+#       inputs:
+#         source: current
+#         artifact: configFiles
+#         path: tools/operator/configFiles
+#     - script: |
+#         cd tools/operator
+#         go run main.go -i testdata/smoke-network-spec.yml -k $KUBE_PATH -a down
+#       displayName: Network delete

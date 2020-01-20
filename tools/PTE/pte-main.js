@@ -1609,8 +1609,8 @@ async function performance_main() {
                         }
                     });
 
-                    workerProcess.stderr.on('data', function (data) {
-                        logger.info('stderr: ' + data);
+                    workerProcess.stdout.on('data', function (data) {
+                        logger.info('stdout: ' + data);
                     });
 
                     workerProcess.on('close', function (code) {

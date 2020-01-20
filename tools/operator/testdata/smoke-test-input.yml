@@ -64,10 +64,10 @@ upgradeChaincode:
 invokes:
   - channelName: testorgschannel0
     name: samplecc
-    targetPeers: OrgAnchor
+    targetPeers: RoundRobin
     nProcPerOrg: 2
-    nRequest: 100
-    runDur: 0
+    nRequest: 0
+    runDur: 604800
     organizations: org1
     txnOpt:
       - mode: constant
@@ -82,8 +82,8 @@ invokes:
     ccOpt:
       ccType: ccchecker
       keyStart: 0
-      payLoadMin: 1024
-      payLoadMax: 2048
+      payLoadMin: 8
+      payLoadMax: 8
     args: "put,a1,1"
 
 queries:
