@@ -132,13 +132,14 @@ stages:
       displayName: Installing Chaincode on org2
     - script: |
         set -x
+        export FABRIC_LOGGING_SPEC=debug
         export FABRIC_CFG_PATH=$GOPATH/config/
         export CORE_PEER_LOCALMSPID=Org1ExampleCom
         export CORE_PEER_TLS_ENABLED=true
         export CORE_PEER_MSPCONFIGPATH="$PWD/tools/operator/crypto-config/peerOrganizations/org1/users/Admin@org1/msp"
         export CORE_PEER_TLS_ROOTCERT_FILE="$PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt"
         export CLUSTER_IP=169.62.57.123
-        peer lifecycle chaincode checkcommitreadiness --channelID testorgschannel0 --name samplecc --version v1 --waitForEvent --sequence 1 --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1 --output json
+        peer lifecycle chaincode checkcommitreadiness --channelID testorgschannel0 --name samplecc --version v1 --sequence 1 --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1 --output json
         peer lifecycle chaincode commit --channelID testorgschannel0 --name samplecc --version v1 --sequence 1 --waitForEvent --peerAddresses $CLUSTER_IP:31000 --orderer $CLUSTER_IP:30000 --tlsRootCertFiles $PWD/tools/operator/crypto-config/peerOrganizations/org1/peers/peer0-org1.org1/tls/ca.crt --tls --cafile $PWD/tools/operator/crypto-config/ordererOrganizations/ordererorg1/orderers/orderer0-ordererorg1.ordererorg1/tls/ca.crt --ordererTLSHostnameOverride orderer0-ordererorg1
       displayName: Instantiating Chaincode
     # - script: |
