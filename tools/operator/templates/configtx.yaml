@@ -8,11 +8,16 @@
 #@   if nodeOUs:
 #@     readwriteset = {"Type": "Signature", "Rule": "OR('{}.admin', '{}.{}', '{}.client')".format(mspId, mspId, type, mspId)}
 #@     admins = {"Type": "Signature", "Rule": "OR('{}.admin')".format(mspId)}
+#@     endorsement = {"Type": "Signature", "Rule": "OR('{}.peer')".format(mspId)}
 #@   else:
 #@     readwriteset = {"Type": "Signature", "Rule": "OR('{}.member')".format(mspId, mspId, type, mspId)}
 #@     admins = {"Type": "Signature", "Rule": "OR('{}.member')".format(mspId)}
+#@     endorsement = {"Type": "Signature", "Rule": "OR('{}.member')".format(mspId)}
 #@   end
 #@   output = {"Readers": readwriteset, "Writers": readwriteset, "Admins": admins}
+#@   if type == "peer":
+#@     output = {"Readers": readwriteset, "Writers": readwriteset, "Admins": admins, "Endorsement": endorsement}
+#@   end
 #@   return output
 #@ end
 #@ def orgOrderers(ordererOrg, port, config):
@@ -64,7 +69,9 @@
 #@     blockValidation = {"Type": "ImplicitMeta", "Rule": "ANY Writers"}
 #@     output = {"Readers":readers, "Writers": writers, "Admins": admins, "BlockValidation": blockValidation}
 #@   else:
-#@     output = {"Readers":readers, "Writers": writers, "Admins": admins}
+#@     lifeCycleEndorsement = {"Type": "ImplicitMeta", "Rule": "MAJORITY Endorsement"}
+#@     endorsement = {"Type": "ImplicitMeta", "Rule": "MAJORITY Endorsement"}
+#@     output = {"Readers":readers, "Writers": writers, "Admins": admins, "LifecycleEndorsement": lifeCycleEndorsement, "Endorsement": endorsement}
 #@   end
 #@   return output
 #@ end
