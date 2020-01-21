@@ -103,32 +103,32 @@ k8s:
   resources:
     orderers:
       limits:
-         cpu: "2"
-         memory: 4Gi
-      requests:
-         cpu: "2"
-         memory: 4Gi
-    peers:
-      limits:
-         cpu: "2"
+         cpu: "1"
          memory: 2Gi
       requests:
-         cpu: "2"
+         cpu: "1"
+         memory: 2Gi
+    peers:
+      limits:
+         cpu: "1"
+         memory: 2Gi
+      requests:
+         cpu: "1"
          memory: 2Gi
 #! dind will be used to run all chaincode containers of a peer
     dind:
       limits:
-         cpu: "2"
+         cpu: "1"
          memory: 2Gi
       requests:
-         cpu: "2"
+         cpu: "1"
          memory: 2Gi
     couchdb:
       limits:
-         cpu: "2"
+         cpu: "1"
          memory: 2Gi
       requests:
-         cpu: "2"
+         cpu: "1"
          memory: 2Gi
     kafka:
       limits:

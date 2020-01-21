@@ -72,7 +72,7 @@ invokes:
     txnOpt:
       - mode: constant
         options:
-          constFreq: 0
+          constFreq: 1000
           devFreq: 0
     queryCheck: 100
     eventOpt:
