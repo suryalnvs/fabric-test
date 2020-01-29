@@ -10,8 +10,8 @@ invokes:
     name: mapcc
     targetPeers: RoundRobin
     nProcPerOrg: 2
-    nRequest: 20000
-    runDur: 0
+    nRequest: 0
+    runDur: 259200
     organizations: org1
     txnOpt:
       - mode: constant

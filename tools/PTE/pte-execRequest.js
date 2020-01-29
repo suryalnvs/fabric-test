@@ -1475,7 +1475,7 @@ function isExecDone(trType) {
                 IDone = 1;
             }
         } else {
-            if ((inv_m % 1000) == 0) {
+            if ((inv_m % 25000) == 0) {
                 logger.info(util.format("[Nid:chan:org:id=%d:%s:%s:%d isExecDone] invokes(%s) sent: number=%d, evtTimeoutCnt=%d, elapsed time= %d",
                     Nid, channelName, org, pid, trType, inv_m, tx_stats[tx_evtTimeout], tCurr - tLocal));
             }
