@@ -184,7 +184,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a query
+        go run main.go -i testdata/map-test-input.yml -a query
       displayName: Queries
 
 - stage: Operator_k8s_invokes1
@@ -218,7 +218,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a invoke
+        go run main.go -i testdata/map-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes2
@@ -252,7 +252,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a invoke
+        go run main.go -i testdata/map-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes3
@@ -286,7 +286,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a invoke
+        go run main.go -i testdata/map-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes4
@@ -320,7 +320,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a invoke
+        go run main.go -i testdata/map-test-input.yml -a invoke
       displayName: Invokes
 
 - stage: Operator_k8s_invokes5
@@ -354,7 +354,7 @@ stages:
       displayName: NPM install
     - script: |
         cd tools/operator
-        go run main.go -i testdata/smoke-test-input.yml -a invoke
+        go run main.go -i testdata/map-test-input.yml -a invoke
       displayName: Invokes
 
 # - stage: Operator_k8s_invokes6
