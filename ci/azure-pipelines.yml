@@ -87,7 +87,7 @@ stages:
           wget https://hyperledger.jfrog.io/hyperledger/fabric-binaries/hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
           tar -xzvf hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
       displayName: BinariesDownload
-    - script: cd tools/operator && ls -lrt configFiles/ && go run main.go -i ../../regression/testdata/basic-network-spec.yml -a upgradeNetwork
+    - script: cd tools/operator && sudo chown -R vsts:docker configFiles/backup && go run main.go -i ../../regression/testdata/basic-network-spec.yml -a upgradeNetwork
       displayName: upgrade
     - script: cd tools/PTE && rm -rf node_modules && npm install
       displayName: npm
