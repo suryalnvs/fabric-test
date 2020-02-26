@@ -25,18 +25,74 @@ variables:
   GO_VER: 1.13.4
   NODE_VER: 10.x
 
-jobs:
-- job: VerifyBuild
+stages:
+- stage: Smoke
+  displayName: Smoke  # friendly name to display in the UI
   pool:
     vmImage: ubuntu-18.04
-  steps:
-  - template: templates/install_deps.yml
-  - script: make lint
-    displayName: Lint Code
-  - script: make regression/smoke
-    displayName: Run Smoke Tests
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: 'regression/smoke/results*.xml'
+  jobs:
+  - job: VerifyBuild
+    pool:
+      vmImage: ubuntu-18.04
+    steps:
+    - template: templates/install_deps.yml
+    - script: make lint
+      displayName: Lint Code
+    - script: make regression/smoke
+      displayName: Run Smoke Tests
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'regression/smoke/results*.xml'
+
+- stage: upgrade
+  displayName: upgrade  # friendly name to display in the UI
+  pool:
+    vmImage: ubuntu-18.04
+  jobs:
+  - job: Upgrade
+    pool:
+      vmImage: ubuntu-18.04
+    timeoutInMinutes: 360
+    steps:
+    - template: templates/install_deps.yml
+    - script: pwd
+      displayName: pwd
+    - script: ls -lrt
+      displayName: ls
+    - script: git checkout release-1.4
+      displayName: release-1.4
+    - script: |
+          wget https://hyperledger.jfrog.io/hyperledger/fabric-binaries/hyperledger-fabric-linux-amd64-1.4.5-stable.tar.gz
+          tar -xzvf hyperledger-fabric-linux-amd64-1.4.5-stable.tar.gz
+      displayName: BinariesDownload
+    - script: cd tools/PTE && npm install
+      displayName: npm
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-network-spec.yml -a up
+      displayName: up
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-test-input.yml -a create
+      displayName: create
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-test-input.yml -a join
+      displayName: join
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-test-input.yml -a install
+      displayName: install
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-test-input.yml -a instantiate
+      displayName: instantiate
+    - script: cd tools/operator && go run main.go -i ./testdata/smoke-test-input.yml -a invoke
+      displayName: invoke
+    - script: git checkout -- go.mod && git checkout master
+      displayName: master
+    - script: |
+          wget https://hyperledger.jfrog.io/hyperledger/fabric-binaries/hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
+          tar -xzvf hyperledger-fabric-linux-amd64-2.0.0-stable.tar.gz
+      displayName: BinariesDownload
+    - script: cd tools/operator && ls -lrt && go run main.go -i ../../regression/testdata/basic-network-spec.yml -a upgradeNetwork
+      displayName: upgrade
+    - script: cd tools/PTE && rm -rf node_modules && npm install
+      displayName: npm
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'regression/**/results*.xml'
