@@ -89,7 +89,7 @@ func (k8s K8s) ordererOrganizations(config networkspec.Config, clientset *kubern
 	var err error
 	var orderer networkspec.Orderer
 	var connProfile connectionprofile.ConnProfile
-	var portNumber, nodeIP string
+	var portNumber, nodeIP, metricsPortNumber string
 	protocol := "grpc"
 	if config.TLS == "true" || config.TLS == "mutual" {
 		protocol = "grpcs"
@@ -107,7 +107,15 @@ func (k8s K8s) ordererOrganizations(config networkspec.Config, clientset *kubern
 			if err != nil {
 				return orderers, err
 			}
-			orderer = networkspec.Orderer{MSPID: ordererOrg.MSPID, URL: fmt.Sprintf("%s://%s:%s", protocol, nodeIP, portNumber)}
+			metricsPortNumber, err = k8s.ServicePort(ordererName, config.K8s.ServiceType, config.K8s.Namespace, true, clientset)
+			if err != nil {
+				return orderers, err
+			}
+			orderer = networkspec.Orderer{
+				MSPID: ordererOrg.MSPID,
+				URL: fmt.Sprintf("%s://%s:%s", protocol, nodeIP, portNumber),
+				MetricsURL: fmt.Sprintf("http://%s:%s", nodeIP, metricsPortNumber),
+			}
 			orderer.GrpcOptions.SslTarget = ordererName
 			tlscaCertPath := paths.JoinPath(ordererOrgsPath, fmt.Sprintf("%s/orderers/%s.%s/msp/tlscacerts/tlsca.%s-cert.pem", orgName, ordererName, orgName, orgName))
 			cert, err := connProfile.GetCertificateFromFile(tlscaCertPath)
@@ -180,7 +188,7 @@ func (k8s K8s) peersPerOrganization(peerorg networkspec.PeerOrganizations, confi
 
 	var err error
 	var peer networkspec.Peer
-	var portNumber, nodeIP string
+	var portNumber, nodeIP, metricsPortNumber string
 	var connProfile connectionprofile.ConnProfile
 	peers := make(map[string]networkspec.Peer)
 	protocol := "grpc"
@@ -198,7 +206,14 @@ func (k8s K8s) peersPerOrganization(peerorg networkspec.PeerOrganizations, confi
 		if err != nil {
 			return peers, err
 		}
-		peer = networkspec.Peer{URL: fmt.Sprintf("%s://%s:%s", protocol, nodeIP, portNumber)}
+		metricsPortNumber, err = k8s.ServicePort(peerName, config.K8s.ServiceType, config.K8s.Namespace, true, clientset)
+		if err != nil {
+			return peers, err
+		}
+		peer = networkspec.Peer{
+			URL: fmt.Sprintf("%s://%s:%s", protocol, nodeIP, portNumber),
+			MetricsURL: fmt.Sprintf("http://%s:%s", nodeIP, metricsPortNumber),
+		}
 		peer.GrpcOptions.SslTarget = peerName
 		tlscaCertPath := paths.JoinPath(peerOrgsLocation, fmt.Sprintf("%s/tlsca/tlsca.%s-cert.pem", peerorg.Name, peerorg.Name))
 		cert, err := connProfile.GetCertificateFromFile(tlscaCertPath)

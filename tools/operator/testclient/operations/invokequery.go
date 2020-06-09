@@ -6,11 +6,16 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"regexp"
 	"sync"
 	"time"
+	"net/http"
+	"net/url"
+	"io/ioutil"
 
 	"github.com/hyperledger/fabric-test/tools/operator/logger"
 	"github.com/hyperledger/fabric-test/tools/operator/networkclient"
+	//"github.com/hyperledger/fabric-test/tools/operator/launcher/k8s"
 	"github.com/hyperledger/fabric-test/tools/operator/paths"
 	"github.com/hyperledger/fabric-test/tools/operator/testclient/inputStructs"
 )
@@ -89,6 +94,11 @@ type DiscoveryOptions struct {
 type Parameters struct {
 	Fcn  string   `json:"fcn,omitempty"`
 	Args []string `json:"args,omitempty"`
+}
+
+type blockchainCount struct {
+	peerTransactionCount int
+	peerBlockchainHeight int 
 }
 
 //InvokeQuery -- To perform invoke/query with the objects created
@@ -206,7 +216,7 @@ func (i InvokeQueryUIObject) createInvokeQueryObjectForOrg(orgNames []string, ac
 }
 
 func (i InvokeQueryUIObject) invokeConfig(channelName string, args []string, wg *sync.WaitGroup) error {
-	defer wg.Done()
+	//defer wg.Done()
 	_, err := networkclient.ExecuteCommand("node", args, true)
 	if err != nil {
 		logger.ERROR(fmt.Sprintf("Failed to perform invoke/query on %s channel: %v", channelName, err))
@@ -230,8 +240,86 @@ func (i InvokeQueryUIObject) invokeQueryTransactions(invokeQueryObjects []Invoke
 		startTime := fmt.Sprintf("%s", time.Now())
 		args := []string{pteMainPath, strconv.Itoa(key), string(jsonObject), startTime}
 		wg.Add(1)
-		go i.invokeConfig(invokeQueryObjects[key].ChannelOpt.Name, args, &wg)
+		go func(err error) {
+			defer wg.Done()
+			err = i.invokeConfig(invokeQueryObjects[key].ChannelOpt.Name, args, &wg)
+			if err != nil {
+				logger.ERROR("Failed to complete invokes/queries")
+				err = fmt.Errorf("Something went wrong in completing invokes/queries")
+			}
+			blockchain, err := i.fetchMetrics(invokeQueryObjects[key])
+			if err != nil {
+				logger.ERROR("failed fetching metrics")
+				err = fmt.Errorf("Something went wrong in fetching metrics")
+			}
+			var blockchainHeight int
+			var transactionCount int
+			channelBlock := blockchain[invokeQueryObjects[key].ChannelOpt.Name]
+			for key, value := range channelBlock {
+				if blockchainHeight == 0 && transactionCount == 0 {
+					blockchainHeight = value.peerBlockchainHeight
+					transactionCount = value.peerTransactionCount
+				} else {
+					if value.peerBlockchainHeight != blockchainHeight || value.peerTransactionCount != transactionCount {
+						logger.ERROR("Peers are not in sync")
+						err = fmt.Errorf("Something went wrong with peer ", key, " as blockchain height or transactions does not match up")
+					}
+				}
+		    }
+		}(err)
 	}
 	wg.Wait()
 	return nil
+}
+
+func (i InvokeQueryUIObject) fetchMetrics(invokeQueryObject InvokeQueryUIObject) (map[string]map[string]blockchainCount, error)  {
+
+	var connProfilePath, metrics string
+	var channelBlockchainCount = make(map[string]map[string]blockchainCount)
+	connectionProfilePath := invokeQueryObject.ConnProfilePath
+	orgName := invokeQueryObject.ChannelOpt.OrgName
+	channelName := invokeQueryObject.ChannelOpt.Name
+	channelBlockchainCount[channelName] = make(map[string]blockchainCount)
+	var err error
+	for i := range orgName {
+		if strings.Contains(connectionProfilePath, ".yaml") || strings.Contains(connectionProfilePath, ".json") {
+			connProfilePath = connectionProfilePath
+		} else {
+			connProfilePath = fmt.Sprintf("%s/connection_profile_%s.yaml", connectionProfilePath, orgName[i])
+		}
+		connProfConfig, err := ConnProfileInformationForOrg(connProfilePath, orgName[i])
+		if err != nil {
+			return nil, err
+		}
+		for _, peerName := range connProfConfig.Channels[channelName].Peers {
+			metricsURL, err := url.Parse(connProfConfig.Peers[peerName].MetricsURL)
+			if err != nil {
+				logger.ERROR("Failed to get peer url from connection profile")
+				return nil, err
+			}
+			resp, err := http.Get(fmt.Sprintf("%s/metrics", metricsURL))
+			if err != nil {
+				logger.ERROR("Error while hitting the endpoint")
+				return nil, err
+			}
+			defer resp.Body.Close()
+			bodyBytes, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			metrics = string(bodyBytes)
+			blockHeight := strings.Split(metrics, fmt.Sprintf(`ledger_blockchain_height{channel="%s"}`, channelName))
+			height := strings.Split(blockHeight[1], "\n")[0]
+			num, _ := strconv.Atoi(strings.TrimSpace(height))	
+			regex := regexp.MustCompile(fmt.Sprintf(`ledger_transaction_count{chaincode="%s:[0-9A-Za-z]+",channel="%s",transaction_type="ENDORSER_TRANSACTION",validation_code="VALID"}`, invokeQueryObject.ChaincodeID, channelName))
+			transactionCount := strings.Split(metrics, fmt.Sprintf(`%s`, regex.FindString(metrics)))
+			trxnCount := strings.Split(transactionCount[1], "\n")[0]
+			count, _ := strconv.Atoi(strings.TrimSpace(trxnCount))
+			channelBlockchainCount[channelName][peerName] = blockchainCount{
+				peerBlockchainHeight: num,
+				peerTransactionCount: count,
+			}
+		}
+	}
+	return channelBlockchainCount, err
 }

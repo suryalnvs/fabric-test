@@ -74,3 +74,37 @@ func (k8s K8s) CheckComponentsHealth(config networkspec.Config, clientset *kuber
 	}
 	return nil
 }
+
+//FetchMetrics --
+// func (k8s K8s) FetchMetrics(componentName string, config networkspec.Config, clientset *kubernetes.Clientset) (string,error) {
+
+// 	logger.INFO("Fetching metrics for ", componentName)
+// 	var nodeIP string
+// 	var metrics string
+// 	portNumber, err := k8s.ServicePort(componentName, config.K8s.ServiceType, k8s.Config.K8s.Namespace, true, clientset)
+// 	if err != nil {
+// 		logger.ERROR("Failed to get the port for ", componentName)
+// 		return metrics, err
+// 	}
+// 	nodeIP, err = k8s.ExternalIP(config, componentName, clientset)
+// 	if err != nil {
+// 		logger.ERROR("Failed to get the IP address for ", componentName)
+// 		return metrics, err
+// 	}
+
+// 	url := fmt.Sprintf("http://%s:%s/metrics", nodeIP, portNumber)
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		logger.ERROR("Error while hitting the endpoint")
+// 		return metrics, err
+// 	}
+// 	defer resp.Body.Close()
+// 	bodyBytes, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return metrics, err
+// 	}
+// 	metrics = string(bodyBytes)
+// 	//logger.INFO("Response status: ", strconv.Itoa(resp.StatusCode))
+// 	logger.INFO("Response body: ", metrics)
+// 	return metrics, err
+// }
